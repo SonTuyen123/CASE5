@@ -1,31 +1,76 @@
 import { Request, Response } from "express";
 import Users from "../models/schemas/user.schema";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import { senMail } from "../utils/mailer";
 dotenv.config();
 
 export class UserController {
-  static async findUser(req: Request, res: Response) {
+  static async login(req: Request, res: Response) {
     let data = {
       email: req.body.email,
       password: req.body.password,
     };
-    console.log(data);
     let user = await Users.findOne({ email: data.email });
-    if (user) {
-      if (user.password === data.password) {
-        return res.status(200).json({ message: "Đăng nhập thành công !" });
-      } else {
-        return res
-          .status(200)
-          .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
-      }
-    } else {
+    if (!user) {
       return res
         .status(200)
         .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
+    } else if (!user.email_verify) {
+      return res.status(200).json({
+        message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
+      });
+    } else {
+      let comparePassword = await bcrypt.compare(data.password, user.password);
+      if (!comparePassword) {
+        return res
+          .status(200)
+          .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
+      } else {
+        let payload = {
+          username: user.username,
+          password: user.password,
+        };
+        let secretKey = process.env.SECRET_KEY;
+        let token = await jwt.sign(payload, secretKey, {
+          expiresIn: 36000000,
+        });
+        const response = {
+          token: token,
+        };
+        return res
+          .status(200)
+          .json({ message: "Đăng nhập thành công !", data: response });
+      }
     }
+
+    // let data = {
+    //   email: req.body.email,
+    //   password: req.body.password,
+    // };
+    // console.log(data);
+    // let user = await Users.findOne({ email: data.email });
+    // if (user) {
+    //   if (user.email_verify === "true") {
+
+    //     if (user.password === data.password) {
+    //       return res.status(200).json({ message: "Đăng nhập thành công !" });
+    //     } else {
+    //       return res
+    //         .status(200)
+    //         .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
+    //     }
+    //   } else {
+    //     return res.status(200).json({
+    //       message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
+    //     });
+    //   }
+    // } else {
+    //   return res
+    //     .status(200)
+    //     .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
+    // }
   }
 
   static async createCustomer(req: Request, res: Response) {
@@ -137,11 +182,11 @@ export class UserController {
     }
   }
   static async verify(req: Request, res: Response) {
-    // console.log(req.body);
-    bcrypt.compare(req.body.data.email, req.body.data.token, (err, result) => {
+    console.log(req.body);
+    bcrypt.compare(req.body.email, req.body.token, (err, result) => {
       if (result === true) {
         Users.findOneAndUpdate(
-          { email: `${req.body.data.email}` },
+          { email: `${req.body.email}` },
           { email_verify: true },
           function (err, docs) {
             if (err) {

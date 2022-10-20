@@ -3,11 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const verifySlice = createSlice({
   name: "verify",
   initialState: {
-    data: {},
+    data: {
+    },
   },
   reducers: {
     verifyRegister: (state, action) => {
-      // console.log(action.payload);
+      console.log(action);
       state.data = action.payload;
     },
   },

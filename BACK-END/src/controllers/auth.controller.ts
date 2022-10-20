@@ -77,7 +77,5 @@ export class authController {
       }
     });
   };
-  checkLogin = (req: Request, res: Response) => {
-    res.render("product/login/checkLogin");
-  };
+  
 }

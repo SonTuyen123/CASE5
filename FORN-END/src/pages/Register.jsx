@@ -73,7 +73,11 @@ export default function Register() {
                     } else if (data === "Email đã tồn tại !") {
                       setErrorsMessage(data);
                     } else {
-                      dispatch(verifyRegister(res.data));
+                      // console.log(JSON.stringify(res.data));
+                      localStorage.setItem(
+                        "verifyRegister",
+                        JSON.stringify(res.data)
+                      );
                       Swal.fire("Xác thuuwc email !").then((result) => {
                         navigate("/register/checkverify");
                       });
