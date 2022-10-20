@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 export declare class UserController {
-    static findUser(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+    static login(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static createCustomer(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static showList(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static deleteUsers(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

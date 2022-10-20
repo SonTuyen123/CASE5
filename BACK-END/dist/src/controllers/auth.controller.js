@@ -90,9 +90,6 @@ class authController {
                 }
             });
         };
-        this.checkLogin = (req, res) => {
-            res.render("product/login/checkLogin");
-        };
     }
 }
 exports.authController = authController;

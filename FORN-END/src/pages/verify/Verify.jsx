@@ -4,20 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export const Verify = () => {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  let verify = JSON.parse(localStorage.getItem("verifyRegister"));
 
-  const verify = useSelector((state) => state.verify);
-  //   console.log(verify);
-  const verifyApi = async (data) => {
-    return await axios.post("http://localhost:8080/admin/verify", data);
+  const verifyApi = async () => {
+    return await axios.post("http://localhost:8080/admin/verify", verify);
   };
   useEffect(() => {
-    verifyApi(verify).then((res) => {
-        console.log(res);
-        let data = res.data.message
-        if (data === "verify thanh cong!") {
-            navigate("/login")
-        }
+    verifyApi().then((res) => {
+      let data = res.data.message;
+      if (data === "verify thanh cong!") {
+        navigate("/login");
+      }
     });
   });
   return (
