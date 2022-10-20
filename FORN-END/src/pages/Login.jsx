@@ -16,7 +16,7 @@ export default function Login() {
   const [errorsMessage, setErrorsMessage] = useState("");
 
   const login = async (data) => {
-    return await axios.post("http://localhost:8080/admin/findUser", data);
+    return await axios.post("http://localhost:8080/admin/login", data);
   };
 
   return (
@@ -44,7 +44,15 @@ export default function Login() {
                   setErrorsMessage(data);
                 } else if (data === "Sai mật khẩu ! Vui lòng thử lại !") {
                   setErrorsMessage(data);
+                } else if (
+                  data ===
+                  "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !"
+                ) {
+                  setErrorsMessage(data);
                 } else {
+                  console.log(res.data.data);
+                  let token = JSON.stringify(res.data.data);
+                  localStorage.setItem("token", token);
                   Swal.fire("Đăng nhập thành công !").then((result) => {
                     navigate("/admin");
                   });

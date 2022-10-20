@@ -5,8 +5,8 @@ import { userValidation, validateUserSignUp } from "../middleware/validation";
 
 import { UserController } from "../controllers/user.controller";
 
-router.post("/findUser", (req, res, next) => {
-  UserController.findUser(req, res).catch((err) => {
+router.post("/login", (req, res, next) => {
+  UserController.login(req, res).catch((err) => {
     next(err);
   });
 });

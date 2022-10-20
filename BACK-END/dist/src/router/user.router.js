@@ -7,8 +7,8 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const validation_1 = require("../middleware/validation");
 const user_controller_1 = require("../controllers/user.controller");
-router.post("/findUser", (req, res, next) => {
-    user_controller_1.UserController.findUser(req, res).catch((err) => {
+router.post("/login", (req, res, next) => {
+    user_controller_1.UserController.login(req, res).catch((err) => {
         next(err);
     });
 });
