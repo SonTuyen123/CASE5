@@ -16,11 +16,6 @@ const inputSchema = Yup.object().shape({
 
 export default function Createmp3() {
   const [Upload, setUpload] = useState([]);
-  console.log(
-    "🚀 ~ file: Createmp3.jsx ~ line 19 ~ Createmp3 ~ Upload",
-    Upload
-  );
-
   const [mp3List, setMp3List] = useState([]);
   const [imageList, setImageList] = useState([]);
   const [errorMessage, setErrorMessage] = useState(false);
@@ -48,9 +43,12 @@ export default function Createmp3() {
           <h1 className="text-4xl font-bold text-indigo-900 mt-">
             Welcome to Venus!
           </h1>
+          
         </div>
         <div>
+          
           <div className="flex items-center border rounded-lg bg-white w-max py-2 px-4 space-x-3">
+            
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4 text-gray-400"
@@ -64,7 +62,10 @@ export default function Createmp3() {
                 strokeWidth={2}
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
+              
             </svg>
+       
+
             <input className="outline-none" type="text" placeholder="Search" />
           </div>
         </div>
@@ -161,6 +162,10 @@ export default function Createmp3() {
           </div>
         </div>
 
+        <div className="text-2xl mt-4 mb-4 text-indigo-700">
+          <h1>Create mp3</h1>
+        </div>
+
         <Formik
           initialValues={{
             name: "",
@@ -216,70 +221,6 @@ export default function Createmp3() {
                 console.log(e);
               });
 
-            // let obj = {
-            //     name: values.name,
-            //     category: values.category,
-            //     singer: values.singer,
-            //     image: fileupload.image,
-            //     mp3: fileupload.mp3,
-            //   };
-
-            // UploadApi(obj)
-            // .then((a) => {
-            //   console.log(a);
-            // })
-            // .catch((e) => {
-            //   console.log(e);
-            // });
-            // const imageRef = ref(storage, `image/${imageUpload.name}`);
-            // const uploadFileMp3 = async () => {
-            //   try {
-            //     if (mp3Upload == null) return;
-            //     const mp3Ref = ref(storage, `mp3/${mp3Upload.name}`);
-            //     await uploadBytes(mp3Ref, mp3Upload)
-            //       .then(async (res) => {
-            //         await getDownloadURL(res.ref).then((urlMp3) => {
-            //           setUrlMp3(urlMp3);
-            //         });
-            //       })
-            //       .catch((e) => {
-            //         console.log(e);
-            //       });
-            //   } catch (err) {
-            //     console.log("uploadFileMp3", err.message);
-            //   }
-            // };
-            // const uploadFileImage = async () => {
-            //   try {
-            //     if (mp3Upload == null) return;
-            //     const mp3Ref = ref(storage, `mp3/${mp3Upload.name}`);
-            //     await uploadBytes(imageRef, imageUpload)
-            //       .then(async (snaphost) => {
-            //         await getDownloadURL(snaphost.ref).then((urlImage) => {
-            //           setUrlImage(urlImage);
-            //         });
-            //       })
-            //       .catch((e) => {
-            //         console.log(e);
-            //       });
-            //   } catch (err) {
-            //     console.log("uploadFileImage", err.message);
-            //   }
-            // };
-            // let data = {
-            //   name: values.name,
-            //   category: values.category,
-            //   singer: values.singer,
-            //   image: urlImage,
-            //   mp3: urlMp3,
-            // };
-            // UploadApi(data)
-            //   .then((a) => {
-            //     console.log(a);
-            //   })
-            //   .catch((e) => {
-            //     console.log(e);
-            //   });
           }}
         >
           {({ errors, touched, isValidating, handleChange, handleSubmit }) => (
@@ -356,7 +297,7 @@ export default function Createmp3() {
                     type="file"
                     name="image"
                     id="file-upload"
-                    className="hidden "
+                  
                   />
 
                   <label
@@ -398,7 +339,7 @@ export default function Createmp3() {
                     type="file"
                     name="mp3"
                     id="filemp3-upload"
-                    className="hidden "
+                    
                   />
                   <label
                     htmlFor="filemp3-upload"
