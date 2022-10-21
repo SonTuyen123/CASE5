@@ -17,6 +17,16 @@ router.post("/register", validation_1.validateUserSignUp, validation_1.userValid
         next(err);
     });
 });
+router.post("/upload", (req, res, next) => {
+    user_controller_1.UserController.upload(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.get("/listMp3", (req, res, next) => {
+    user_controller_1.UserController.listMp3(req, res).catch((err) => {
+        next(err);
+    });
+});
 router.post("/verify", (req, res, next) => {
     user_controller_1.UserController.verify(req, res).catch((err) => {
         next(err);

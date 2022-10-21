@@ -28,12 +28,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const user_schema_1 = __importDefault(require("../models/schemas/user.schema"));
+const listmp3_schema_1 = __importDefault(require("../models/schemas/listmp3.schema"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv = __importStar(require("dotenv"));
 const mailer_1 = require("../utils/mailer");
 dotenv.config();
 class UserController {
+    static async upload(req, res) {
+        let data = {
+            name: req.body.name,
+            category: req.body.category,
+            singer: req.body.singer,
+            image: req.body.image,
+            mp3: req.body.mp3,
+            user_id: "",
+        };
+        console.log("🚀 ~ file: user.controller.ts ~ line 19 ~ UserController ~ upload ~ data", data);
+        await listmp3_schema_1.default.create(data, (err, user) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log(user);
+            }
+        });
+        return res.status(200).json({ message: "Thêm thành công !" });
+    }
+    static async listMp3(req, res) {
+        const mp3list = await listmp3_schema_1.default.find();
+        return res.status(200).json({ list: mp3list });
+    }
     static async login(req, res) {
         let data = {
             email: req.body.email,
