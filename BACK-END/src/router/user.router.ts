@@ -20,6 +20,17 @@ router.post(
     });
   }
 );
+
+router.post("/upload", (req, res, next) => {
+  UserController.upload(req, res).catch((err) => {
+    next(err);
+  });
+});
+router.get("/listMp3", (req, res, next) => {
+  UserController.listMp3(req, res).catch((err) => {
+    next(err);
+  });
+});
 router.post("/verify", (req, res, next) => {
   UserController.verify(req, res).catch((err) => {
     next(err);
