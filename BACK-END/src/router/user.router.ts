@@ -53,13 +53,18 @@ router.post("/UploadImageUser", async (req, res, next) => {
   });
 });
 
-
-
-router.delete("/delete", async (req, res, next) => {
+router.post("/delete", async (req, res, next) => {
   UserController.deleteUsers(req, res).catch((err) => {
     next(err);
   });
 });
+router.post("/deleteMp3", async (req, res, next) => {
+  UserController.deleteMp3(req, res).catch((err) => {
+    next(err);
+  });
+});
+
+
 router.get("/edit", async (req, res, next) => {
   UserController.showFormEditCustomer(req, res).catch((err) => {
     next(err);

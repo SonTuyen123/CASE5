@@ -65,6 +65,7 @@ class UserController {
             password: req.body.password,
         };
         let user = await user_schema_1.default.findOne({ email: data.email });
+        console.log("🚀 ~ file: user.controller.ts ~ line 44 ~ UserController ~ login ~ user", user);
         if (!user) {
             return res
                 .status(200)
@@ -137,8 +138,20 @@ class UserController {
         console.log(data);
     }
     static async deleteUsers(req, res) {
-        let id = req.body;
+        let id = req.body.id;
         console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
+        await user_schema_1.default.deleteOne({
+            _id: `${id}`,
+        });
+        return res.status(200).json({ message: "delete thanh cong" });
+    }
+    static async deleteMp3(req, res) {
+        let id = req.body.id;
+        console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
+        await listmp3_schema_1.default.deleteOne({
+            _id: `${id}`,
+        });
+        return res.status(200).json({ message: "delete mp3 thanh cong" });
     }
     static async showFormEditCustomer(req, res) {
         let id = req.query.id;
@@ -176,7 +189,6 @@ class UserController {
                 username: user.username,
                 email: user.email,
                 password: user.password,
-                role: "user",
                 email_verify: false,
             };
             let newUser = await user_schema_1.default.create(data, (err, user) => {

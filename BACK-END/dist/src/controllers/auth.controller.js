@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv = __importStar(require("dotenv"));
 const user_schema_1 = __importDefault(require("src/models/schemas/user.schema"));
@@ -89,6 +90,47 @@ class authController {
                     res.redirect("/404");
                 }
             });
+        };
+        this.login = async (req, res) => {
+            let data = {
+                email: req.body.email,
+                password: req.body.password,
+            };
+            let user = await user_schema_1.default.findOne({ email: data.email });
+            if (!user) {
+                return res
+                    .status(200)
+                    .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
+            }
+            else if (!user.email_verify) {
+                return res.status(200).json({
+                    message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
+                });
+            }
+            else {
+                let comparePassword = await bcrypt_1.default.compare(data.password, user.password);
+                if (!comparePassword) {
+                    return res
+                        .status(200)
+                        .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
+                }
+                else {
+                    let payload = {
+                        username: user.username,
+                        password: user.password,
+                    };
+                    let secretKey = process.env.SECRET_KEY;
+                    let token = await jsonwebtoken_1.default.sign(payload, secretKey, {
+                        expiresIn: 36000000,
+                    });
+                    const response = {
+                        token: token,
+                    };
+                    return res
+                        .status(200)
+                        .json({ message: "Đăng nhập thành công !", data: response });
+                }
+            }
         };
     }
 }

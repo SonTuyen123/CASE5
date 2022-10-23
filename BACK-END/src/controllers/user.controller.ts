@@ -41,6 +41,10 @@ export class UserController {
       password: req.body.password,
     };
     let user = await Users.findOne({ email: data.email });
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 44 ~ UserController ~ login ~ user",
+      user
+    );
     if (!user) {
       return res
         .status(200)
@@ -112,17 +116,31 @@ export class UserController {
   }
 
   static async deleteUsers(req: Request, res: Response) {
-    let id = req.body;
+    let id = req.body.id;
     console.log(
       "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
       id
     );
-
-    // await Users.deleteOne({
-    //   _id: `${id}`,
-    // });
-    // return res.status(200).json({ message: "delete thanh cong" });
+    await Users.deleteOne({
+      _id: `${id}`,
+    });
+    return res.status(200).json({ message: "delete thanh cong" });
   }
+  static async deleteMp3(req: Request, res: Response) {
+    let id = req.body.id;
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
+      id
+    );
+    await ListMp3.deleteOne({
+      _id: `${id}`,
+    });
+    return res.status(200).json({ message: "delete mp3 thanh cong" });
+  }
+
+
+ 
+
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;
     const custormerSelect = await Users.findOne({
@@ -166,7 +184,6 @@ export class UserController {
         username: user.username,
         email: user.email,
         password: user.password,
-        role: "user",
         email_verify: false,
       };
 

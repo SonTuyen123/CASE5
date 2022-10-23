@@ -28,13 +28,12 @@ export default function ListUser() {
   const [showModal, setShowModal] = useState(false);
   const [idUser, setIdUser] = useState("");
   const [idDeleteUser, setIdDeleteUser] = useState("");
-
   const [newUser, setNewUser] = useState([]);
   const [errorImage, setErrorImage] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
   const [Upload, setUpload] = useState([]);
+  const [flag, setFlag] = useState();
 
-  // let idUser = useRef();
 
   const listUerApi = async () => {
     return await axios.get("http://localhost:8080/admin/list");
@@ -43,7 +42,7 @@ export default function ListUser() {
     return await axios.post("http://localhost:8080/admin/findUser", data);
   };
   const deleteUerApi = async (data) => {
-    return await axios.delete("http://localhost:8080/admin/delete", data);
+    return await axios.post("http://localhost:8080/admin/delete", data);
   };
 
   const UploadImgApi = async (data) => {
@@ -59,7 +58,7 @@ export default function ListUser() {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [flag]);
 
   useEffect(() => {
     findUerApi({ id: idUser })
@@ -83,6 +82,7 @@ export default function ListUser() {
     deleteUerApi({ id: idDeleteUser })
       .then((res) => {
         console.log(res);
+        setFlag(res);
       })
       .catch((e) => {
         console.log(e);
