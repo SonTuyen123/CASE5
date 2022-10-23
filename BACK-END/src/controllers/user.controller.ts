@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Users from "../models/schemas/user.schema";
+import ListMp3 from "../models/schemas/listmp3.schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
@@ -7,6 +8,34 @@ import { senMail } from "../utils/mailer";
 dotenv.config();
 
 export class UserController {
+
+  static async upload(req: Request, res: Response) {
+    let data = {
+      name: req.body.name,
+      category: req.body.category,
+      singer: req.body.singer,
+      image: req.body.image,
+      mp3: req.body.mp3,
+      user_id: "",
+    };
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 19 ~ UserController ~ upload ~ data",
+      data
+    );
+    await ListMp3.create(data, (err, user) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(user);
+      }
+    });
+    return res.status(200).json({ message: "Thêm thành công !" });
+  }
+  static async listMp3(req: Request, res: Response) {
+    const mp3list = await ListMp3.find();
+    return res.status(200).json({ list: mp3list });
+   }
+
   static async login(req: Request, res: Response) {
     let data = {
       email: req.body.email,
@@ -44,33 +73,6 @@ export class UserController {
           .json({ message: "Đăng nhập thành công !", data: response });
       }
     }
-
-    // let data = {
-    //   email: req.body.email,
-    //   password: req.body.password,
-    // };
-    // console.log(data);
-    // let user = await Users.findOne({ email: data.email });
-    // if (user) {
-    //   if (user.email_verify === "true") {
-
-    //     if (user.password === data.password) {
-    //       return res.status(200).json({ message: "Đăng nhập thành công !" });
-    //     } else {
-    //       return res
-    //         .status(200)
-    //         .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
-    //     }
-    //   } else {
-    //     return res.status(200).json({
-    //       message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
-    //     });
-    //   }
-    // } else {
-    //   return res
-    //     .status(200)
-    //     .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
-    // }
   }
 
   static async createCustomer(req: Request, res: Response) {
