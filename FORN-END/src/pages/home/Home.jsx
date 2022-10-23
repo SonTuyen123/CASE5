@@ -9,13 +9,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setData } from '../../redux/features/listMusicSlice';
 import  '../../../src/style.css' ;
+export const getApi = async() =>{
+  let data = await axios.get('http://localhost:8080/admin/listMp3')
+    return data
+}
 const Home = () =>{
   let [listMusic , setListMusic] = useState();
   let url = useSelector(res => res.player.url);
+  let data = useSelector(res => res.listMussic)
   let dispatch = useDispatch()
   useEffect(() =>{
-    axios.get('http://localhost:8080/admin/listMp3')
-    .then(res =>{ setListMusic(res.data.list) ; dispatch(setData(res.data.list)) ;})
+    getApi()
+    .then(res =>{ dispatch(setData(res.data.list)) ;})
     .catch(e =>  console.log(e.message))
   },[url])
   return <>
@@ -28,7 +33,7 @@ const Home = () =>{
       <Search/>
       <h2 className="preface">Tuổi trẻ là thứ quý giá nhất , chúng ta hãy chân tận dụng nó tốt nhất có thể nhé </h2>
       <div class="row1 play-list">
-        {listMusic && listMusic.map((element=>{
+        {data && data.data.map((element=>{
           return <>
           <div class="col-1 ll-4" key={element.id}>
           <Card name={element.name} image={element.image} mp3={element.mp3}/>
