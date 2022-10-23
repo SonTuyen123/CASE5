@@ -5,6 +5,7 @@ const HeaderTop = () =>{
     <div className="coder">
     <h2>Design Tung Phích</h2>
     <h2>Backend Tuyến Hàng Tuyển</h2>
+    <h2>Support Vũ Minh Anh</h2>
     </div>
     <p className="sologan">We don't stop</p>
 
