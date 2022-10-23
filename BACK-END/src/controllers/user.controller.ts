@@ -100,10 +100,7 @@ export class UserController {
   }
   static async findUser(req: Request, res: Response) {
     let id = req.body.id;
-    console.log(
-      "🚀 ~ file: user.controller.ts ~ line 105 ~ UserController ~ findUser ~ data",
-      id
-    );
+
     let User = await Users.findOne({
       _id: id,
     });
@@ -116,11 +113,15 @@ export class UserController {
 
   static async deleteUsers(req: Request, res: Response) {
     let id = req.body;
-    console.log(id);
-    await Users.deleteOne({
-      _id: `${id}`,
-    });
-    return res.status(200).json({ message: "delete thanh cong" });
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
+      id
+    );
+
+    // await Users.deleteOne({
+    //   _id: `${id}`,
+    // });
+    // return res.status(200).json({ message: "delete thanh cong" });
   }
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;
