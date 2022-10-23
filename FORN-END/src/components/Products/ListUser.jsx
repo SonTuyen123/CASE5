@@ -27,6 +27,8 @@ export default function ListUser() {
   const [datauser, setDataUser] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [idUser, setIdUser] = useState("");
+  const [idDeleteUser, setIdDeleteUser] = useState("");
+
   const [newUser, setNewUser] = useState([]);
   const [errorImage, setErrorImage] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
@@ -41,7 +43,7 @@ export default function ListUser() {
     return await axios.post("http://localhost:8080/admin/findUser", data);
   };
   const deleteUerApi = async (data) => {
-    return await axios.post("http://localhost:8080/admin/delete", data);
+    return await axios.delete("http://localhost:8080/admin/delete", data);
   };
 
   const UploadImgApi = async (data) => {
@@ -70,9 +72,22 @@ export default function ListUser() {
   }, [idUser]);
 
   const handleDeleteUser = (value) => {
-    // console.log(value);
-    deleteUerApi(value).then();
+    console.log(
+      "🚀 ~ file: ListUser.jsx ~ line 73 ~ handleDeleteUser ~ value",
+      value
+    );
+    setIdDeleteUser(value);
   };
+
+  useEffect(() => {
+    deleteUerApi({ id: idDeleteUser })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [idDeleteUser]);
   const handleEditUser = (value) => {
     setIdUser(value);
     setShowModal(true);
