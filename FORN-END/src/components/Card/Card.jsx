@@ -23,7 +23,7 @@ const Card = (props) =>{
     <div className="card-info">
 
     </div>
-    <div className="btn">
+    <div className="btn-page">
     <button onClick={handleClick} className="btn-play-list">Phát bài hát</button>
       </div>
     </div>

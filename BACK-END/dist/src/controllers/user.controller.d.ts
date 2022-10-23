@@ -7,7 +7,7 @@ export declare class UserController {
     static showList(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static findUser(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static UploadImgUser(req: Request, res: Response): Promise<void>;
-    static deleteUsers(req: Request, res: Response): Promise<void>;
+    static deleteUsers(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static showFormEditCustomer(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static editUsers(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     static register(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

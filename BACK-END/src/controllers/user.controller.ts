@@ -117,10 +117,10 @@ export class UserController {
   static async deleteUsers(req: Request, res: Response) {
     let id = req.body;
     console.log(id);
-    // await Users.deleteOne({
-    //   _id: `${id}`,
-    // });
-    // return res.status(200).json({ message: "delete thanh cong" });
+    await Users.deleteOne({
+      _id: `${id}`,
+    });
+    return res.status(200).json({ message: "delete thanh cong" });
   }
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;

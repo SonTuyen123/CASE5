@@ -41,7 +41,7 @@ export default function ListUser() {
     return await axios.post("http://localhost:8080/admin/findUser", data);
   };
   const deleteUerApi = async (data) => {
-    return await axios.delete("http://localhost:8080/admin/delete", data);
+    return await axios.post("http://localhost:8080/admin/delete", data);
   };
 
   const UploadImgApi = async (data) => {
