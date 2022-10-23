@@ -6,7 +6,7 @@ module.exports = {
         primary: "#ff5500",
         "primary-page-text": "#fff",
         "btn-primary": "#030303",
-        opacity: "#ccc",
+        opacity: "#333",
       },
     },
     container: {
