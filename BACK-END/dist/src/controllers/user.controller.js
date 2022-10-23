@@ -125,8 +125,20 @@ class UserController {
         const customer = await user_schema_1.default.find();
         return res.status(200).json({ user: customer });
     }
+    static async findUser(req, res) {
+        let id = req.body.id;
+        console.log("🚀 ~ file: user.controller.ts ~ line 105 ~ UserController ~ findUser ~ data", id);
+        let User = await user_schema_1.default.findOne({
+            _id: id,
+        });
+        return res.status(200).json({ user: User });
+    }
+    static async UploadImgUser(req, res) {
+        let data = req.body;
+        console.log(data);
+    }
     static async deleteUsers(req, res) {
-        let id = req.params.id;
+        let id = req.body;
         console.log(id);
         await user_schema_1.default.deleteOne({
             _id: `${id}`,

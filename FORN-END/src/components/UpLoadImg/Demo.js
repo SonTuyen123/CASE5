@@ -6,7 +6,6 @@ import { v4 } from "uuid";
 export default function Demo() {
   const [mp3Upload, setMp3Upload] = useState(null);
   const [ImageUpload, setImageUpload] = useState(null);
-  console.log("🚀 ~ file: Demo.js ~ line 9 ~ Demo ~ ImageUpload", ImageUpload);
   const [mp3List, setMp3List] = useState([]);
 
   let types = /(\.|\/)(mp3)$/i;

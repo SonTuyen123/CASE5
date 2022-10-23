@@ -37,7 +37,17 @@ router.get("/list", async (req, res, next) => {
         next(err);
     });
 });
-router.delete("/delete/:id", async (req, res, next) => {
+router.post("/findUser", async (req, res, next) => {
+    user_controller_1.UserController.findUser(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.post("/UploadImageUser", async (req, res, next) => {
+    user_controller_1.UserController.UploadImgUser(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.delete("/delete", async (req, res, next) => {
     user_controller_1.UserController.deleteUsers(req, res).catch((err) => {
         next(err);
     });

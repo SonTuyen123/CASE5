@@ -8,6 +8,7 @@ import {Verify} from "./pages/verify/Verify";
 import {Checks} from "./pages/checkVerify/Checks";
 import ListUser from "./components/Products/ListUser";
 import Createmp3 from "./components/Products/Createmp3";
+import ListMp3 from "./components/Products/ListMp3";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/admin" element={<Admins />}>
           <Route path="/admin/list" element={<ListUser />} />
           <Route path="/admin/createmp3" element={<Createmp3 />} />
+          <Route path="/admin/listmp3" element={<ListMp3 />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/register/checkverify" element={<Checks />} />

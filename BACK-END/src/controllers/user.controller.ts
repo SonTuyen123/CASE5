@@ -8,7 +8,6 @@ import { senMail } from "../utils/mailer";
 dotenv.config();
 
 export class UserController {
-
   static async upload(req: Request, res: Response) {
     let data = {
       name: req.body.name,
@@ -34,7 +33,7 @@ export class UserController {
   static async listMp3(req: Request, res: Response) {
     const mp3list = await ListMp3.find();
     return res.status(200).json({ list: mp3list });
-   }
+  }
 
   static async login(req: Request, res: Response) {
     let data = {
@@ -99,8 +98,24 @@ export class UserController {
     const customer = await Users.find();
     return res.status(200).json({ user: customer });
   }
+  static async findUser(req: Request, res: Response) {
+    let id = req.body.id;
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 105 ~ UserController ~ findUser ~ data",
+      id
+    );
+    let User = await Users.findOne({
+      _id: id,
+    });
+    return res.status(200).json({ user: User });
+  }
+  static async UploadImgUser(req: Request, res: Response) {
+    let data = req.body;
+    console.log(data);
+  }
+
   static async deleteUsers(req: Request, res: Response) {
-    let id = req.params.id;
+    let id = req.body;
     console.log(id);
     await Users.deleteOne({
       _id: `${id}`,
