@@ -8,19 +8,24 @@
 }
 body{
   background-color: #f2f2f2;
-
 }
 .main-content{
   background-color: #fff;
-  height: 100vh;
 }
 .background-top{
   background-image: url('/public/assets/images/desktop-background.jpg') ;
   background-repeat: round;
   height: 400px;
+  margin-top: 70px;
+}
+.preface{
+  margin-top: 100px;
+  margin-bottom: 22px;
+  font-size: 22px;
+  text-align: center;
 }
 .play-list{
-  padding-top: 200px;
+  padding-top: 36px;
 }
 .text-category{
   font-size: 18px;
@@ -29,7 +34,7 @@ body{
 
 .search-header{
   position: relative;
-  top: 74px;
+  top: 60px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -76,7 +81,6 @@ body{
   width: 800px;
 }
 .card-music{
-  box-shadow: 8px 4px #dbdada;
   background-image: url('../public/assets/images/a.jpg');
   background-repeat: round;
   background-color: transparent;
@@ -87,6 +91,10 @@ body{
   overflow: hidden;
   border: 1px solid #ccc;
   margin: auto;
+  margin-bottom: 40px;
+}
+.card-music:hover > .btn-play-card {
+  display: block;
 }
 .card-img{
   height: 280px;
@@ -107,10 +115,14 @@ body{
   border-radius: 50%;
   line-height: 80px;
 }
+
 .icons-card:hover{
   cursor: pointer;
   background-color: rgb(47, 47, 46);
 }
+
+
+
 .card-info{
   margin-top: 10px;
   padding-left: 4px;
@@ -137,16 +149,18 @@ body{
   width: 100%;
   text-align: center;
   margin-bottom: 32px;
+  background-color: transparent;
+  border: none;
 }
 .btn-play-list{
   width: 80%;
   text-align: center;
-  padding: 10px;
   background-color: #ff5500;
   border-radius: 4px;
   color: white;
   font-size: 18px;
   margin: auto;
+  height: 80%;
 }
 .btn-play-list:hover{
   opacity: 0.8;
@@ -172,7 +186,7 @@ body{
 
 audio::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-panel {
-background-color: rgb(245, 102, 31) ;
+background-color: rgba(245, 102, 31 , 1) ;
 color: #fff;
 }
 

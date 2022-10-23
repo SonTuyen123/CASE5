@@ -74,11 +74,9 @@ export default function ListUser() {
     deleteUerApi(value).then();
   };
   const handleEditUser = (value) => {
-    // console.log(value);
     setIdUser(value);
     setShowModal(true);
   };
-  console.log(newUser);
 
   return (
     <div className="bg-indigo-50 flex-grow py-12 px-10">
