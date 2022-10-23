@@ -43,12 +43,9 @@ export default function Createmp3() {
           <h1 className="text-4xl font-bold text-indigo-900 mt-">
             Welcome to Venus!
           </h1>
-          
         </div>
         <div>
-          
           <div className="flex items-center border rounded-lg bg-white w-max py-2 px-4 space-x-3">
-            
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4 text-gray-400"
@@ -62,9 +59,7 @@ export default function Createmp3() {
                 strokeWidth={2}
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
-              
             </svg>
-       
 
             <input className="outline-none" type="text" placeholder="Search" />
           </div>
@@ -175,6 +170,7 @@ export default function Createmp3() {
           validationSchema={inputSchema}
           onSubmit={async (values, { resetForm }) => {
             let types = /(\.|\/)(mp3)$/i;
+            console.log(Upload[1]);
 
             fileupload = {};
             for (let i = 0; i < Upload.length; i++) {
@@ -220,7 +216,6 @@ export default function Createmp3() {
               .catch((e) => {
                 console.log(e);
               });
-
           }}
         >
           {({ errors, touched, isValidating, handleChange, handleSubmit }) => (
@@ -228,7 +223,7 @@ export default function Createmp3() {
               <div className="mb-6">
                 <label
                   htmlFor="text"
-                  className="block mb-2 text-sm font-medium  "
+                  className="block mb-2 text-sm font-medium  text-gray-900"
                 >
                   Name
                 </label>
@@ -297,7 +292,6 @@ export default function Createmp3() {
                     type="file"
                     name="image"
                     id="file-upload"
-                  
                   />
 
                   <label
@@ -339,7 +333,6 @@ export default function Createmp3() {
                     type="file"
                     name="mp3"
                     id="filemp3-upload"
-                    
                   />
                   <label
                     htmlFor="filemp3-upload"

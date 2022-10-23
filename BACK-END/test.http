@@ -23,3 +23,11 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:8080/admin/listMp3
+###
+
+POST  http://localhost:8080/admin/findUser
+Content-Type: application/json
+
+{
+      "id":"6350ffdb205f3925d49c95ec"
+}
