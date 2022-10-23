@@ -1,25 +1,57 @@
 import axios from "axios";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
+import { storage } from "../UpLoadImg/firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 const UpdateSchema = Yup.object().shape({
   firstname: Yup.string().required("Required"),
   lastname: Yup.string().required("Required"),
   username: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  image: Yup.string().required("Required"),
+  email_verify: Yup.string().required("Required"),
 });
+
+// check duoi image
+// function reverse(str) {
+//   return [...str].reverse().join("").split(".", 4)[0];
+// }
+// function reverseInitial(str) {
+//   return [...str].reverse().join("");
+// }
+// const arr = ["jpeg", "jpg", "gif", "png"];
+
+const validImageTypes = ["image/gif", "image/jpeg", "image/png"];
 
 export default function ListUser() {
   const [datauser, setDataUser] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [idUser, setIdUser] = useState("");
+  const [newUser, setNewUser] = useState([]);
+  const [errorImage, setErrorImage] = useState("");
+  const [ImageUpload, setImageUpload] = useState(null);
+  const [Upload, setUpload] = useState([]);
+
+  // let idUser = useRef();
+
   const listUerApi = async () => {
     return await axios.get("http://localhost:8080/admin/list");
   };
+  const findUerApi = async (data) => {
+    return await axios.post("http://localhost:8080/admin/findUser", data);
+  };
+  const deleteUerApi = async (data) => {
+    return await axios.post("http://localhost:8080/admin/delete", data);
+  };
+
+  const UploadImgApi = async (data) => {
+    const url = "http://localhost:8080/admin/UploadImageUser";
+    return await axios.post(url, data);
+  };
+
   useEffect(() => {
     listUerApi()
       .then((res) => {
-        // console.log(res.data.user);
         setDataUser(res.data.user);
       })
       .catch((e) => {
@@ -27,9 +59,25 @@ export default function ListUser() {
       });
   }, []);
 
-  const handleDelete = (e) => {
-    console.log(e);
+  useEffect(() => {
+    findUerApi({ id: idUser })
+      .then((res) => {
+        setNewUser(res.data.user);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [idUser]);
+
+  const handleDeleteUser = (value) => {
+    // console.log(value);
+    deleteUerApi(value).then();
   };
+  const handleEditUser = (value) => {
+    setIdUser(value);
+    setShowModal(true);
+  };
+
   return (
     <div className="bg-indigo-50 flex-grow py-12 px-10">
       <div className="flex justify-between">
@@ -154,8 +202,8 @@ export default function ListUser() {
           <div className="w-full overflow-x-auto">
             <table className="w-full whitespace-no-wrap">
               <thead>
-                <tr className="text-xs font-semibold tracking-wide text-left text-black uppercase border-b dark:border-gray-700 bg-white dark:text-black ">
-                  <th className="px-4 py-3">Client</th>
+                <tr className="text-xs font-semibold tracking-wide text-left  text-white uppercase border-b dark:border-gray-700 bg-slate-600 dark:text-white ">
+                  <th className="px-4 py-3 ">Client</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3"></th>
@@ -179,14 +227,16 @@ export default function ListUser() {
                           />
                         </div>
                         <div>
-                          <p className="font-semibold">{item.username}</p>
+                          <p className=" font-bold">{item.username}</p>
                           <p className="text-xs text-gray-600 dark:text-gray-400">
                             {item.firstname} {item.lastname}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm">{item.email}</td>
+                    <td className="px-4 py-3 font-bold text-sm">
+                      {item.email}
+                    </td>
                     <td className="px-4 py-3 text-xs">
                       {item.email_verify === "true" ? (
                         <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
@@ -199,45 +249,24 @@ export default function ListUser() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      <label
+                      <button
                         htmlFor="my-modal-3"
                         className="btn btn-circle  bg-blue-700 border-blue-700"
+                        onClick={() => {
+                          handleEditUser(item._id);
+                        }}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-6 h-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                          />
-                        </svg>
-                      </label>
+                        <a>
+                          <i class="fa-solid fa-pen-to-square fa-2x"></i>
+                        </a>
+                      </button>
                       <button
-                        onClick={(e) => {
-                          handleDelete(e);
+                        onClick={() => {
+                          handleDeleteUser(item._id);
                         }}
                         className="btn btn-circle bg-red-500 border-red-600"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
+                        <i class="fa-solid fa-trash-can fa-2x"></i>
                       </button>
                     </td>
                   </tr>
@@ -334,164 +363,244 @@ export default function ListUser() {
       <div />
       <div />
 
-      <div>
-        <input type="checkbox" id="my-modal-3" className="modal-toggle" />
-        <div className="modal">
-          <div className="modal-box relative">
-            <label
-              htmlFor="my-modal-3"
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-            >
-              ✕
-            </label>
-            <h3 className="text-lg font-bold">Update User</h3>
-            <br></br>
-            <Formik
-              initialValues={{
-                firstname: "",
-                lastname: "",
-                username: "",
-                email: "",
-                image: "",
-              }}
-              validationSchema={UpdateSchema}
-              onSubmit={(values) => {
-                console.log(values);
-              }}
-            >
-              {({
-                errors,
-                touched,
-                isValidating,
-                handleChange,
-                handleSubmit,
-              }) => (
-                <form
-                  novalidate=""
-                  action=""
-                  className="space-y-12 ng-untouched ng-pristine ng-valid"
-                >
-                  <div className="space-y-4">
-                    <div>
-                      <label for="first name" className="block mb-2 text-sm">
-                        First name
-                      </label>
-                      <input
-                        type="text"
-                        name="firstname"
-                        onChange={handleChange}
-                        id="first name"
-                        placeholder="first name"
-                        className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                      />
-                      {errors.firstname && touched.firstname ? (
-                        <div style={{ color: "red" }}>{errors.firstname}</div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label for="last name" className="block mb-2 text-sm">
-                        Last name
-                      </label>
-                      <input
-                        type="text"
-                        name="lastname"
-                        onChange={handleChange}
-                        id="last name"
-                        placeholder="last name"
-                        className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                      />
-                      {errors.lastname && touched.lastname ? (
-                        <div style={{ color: "red" }}>{errors.lastname}</div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label for="user name" className="block mb-2 text-sm">
-                        User name
-                      </label>
-                      <input
-                        type="text"
-                        name="username"
-                        onChange={handleChange}
-                        id="user name"
-                        placeholder="user name"
-                        className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                      />
-                      {errors.username && touched.username ? (
-                        <div style={{ color: "red" }}>{errors.username}</div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label for="email" className="block mb-2 text-sm">
-                        Email address
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        onChange={handleChange}
-                        id="email"
-                        placeholder="a@jenkins.com"
-                        className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                      />
-                      {errors.email && touched.email ? (
-                        <div style={{ color: "red" }}>{errors.email}</div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label for="email" className="block mb-2 text-sm">
-                        Photo
-                      </label>
-                      <div className="border rounded-md border-gray-700 bg-gray-900">
-                        <input
-                          type="file"
-                          name="image"
-                          id="file-upload"
-                          onChange={handleChange}
-                        />
-                        <label
-                          htmlFor="file-upload"
-                          className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer"
-                        >
-                          <p className="z-10 text-xs font-light text-center text-gray-500">
-                            Upload file (JPG,PNG,...)
-                          </p>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                            />
-                          </svg>
-                        </label>
-                      </div>
-                      {errors.image && touched.image ? (
-                        <div style={{ color: "red" }}>{errors.image}</div>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div>
-                      <button
-                        onClick={handleSubmit}
-                        type="submit"
-                        className="w-full px-8 py-3 font-semibold rounded-md dark:bg-violet-400 dark:text-gray-900"
+      {showModal ? (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                  <h3 className="text-3xl font-semibold">Update User</h3>
+                  <a onClick={() => setShowModal(false)}>
+                    <i class="fa-solid fa-x"></i>
+                  </a>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <Formik
+                    initialValues={{
+                      firstname: "",
+                      lastname: "",
+                      username: "",
+                      email_verify: "",
+                    }}
+                    validationSchema={UpdateSchema}
+                    onSubmit={(values, { resetForm }) => {
+                      let image = Upload["type"];
+                      console.log(
+                        "🚀 ~ file: ListUser.jsx ~ line 388 ~ ListUser ~ image",
+                        image
+                      );
+
+                      if (!validImageTypes.includes(image)) {
+                        setErrorImage(true);
+                      } else {
+                        setErrorImage(false);
+                        const imageRef = ref(storage, `image/${Upload}`);
+                        uploadBytes(imageRef, Upload).then((snaphost) => {
+                          getDownloadURL(snaphost.ref).then((url) => {
+                            UploadImgApi({
+                              id: newUser._id,
+                              image: url,
+                              firstname: values.firstname,
+                              lastname: values.lastname,
+                              username: values.username,
+                              email_verify: values.email_verify,
+                            });
+                          });
+                        });
+                      }
+                    }}
+                  >
+                    {({
+                      errors,
+                      touched,
+                      isValidating,
+                      handleChange,
+                      handleSubmit,
+                    }) => (
+                      <form
+                        novalidate=""
+                        action=""
+                        className="space-y-12 ng-untouched ng-pristine ng-valid"
                       >
-                        UPDATE
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
-            </Formik>
+                        <div className="space-y-4">
+                          <div className="hidden">
+                            <label
+                              for="first name"
+                              className="block mb-2 text-sm"
+                            >
+                              Id
+                            </label>
+                            <input
+                              type="text"
+                              name="id"
+                              value={newUser._id}
+                              onChange={handleChange}
+                              id="first name"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              for="first name"
+                              className="block mb-2 text-sm"
+                            >
+                              First name
+                            </label>
+                            <input
+                              type="text"
+                              name="firstname"
+                              value={newUser.firstname}
+                              onChange={handleChange}
+                              id="first name"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                            />
+                            {errors.firstname && touched.firstname ? (
+                              <div style={{ color: "red" }}>
+                                {errors.firstname}
+                              </div>
+                            ) : null}
+                          </div>
+                          <div>
+                            <label
+                              for="last name"
+                              className="block mb-2 text-sm"
+                            >
+                              Last name
+                            </label>
+                            <input
+                              type="text"
+                              name="lastname"
+                              value={newUser.lastname}
+                              onChange={handleChange}
+                              id="last name"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                            />
+                            {errors.lastname && touched.lastname ? (
+                              <div style={{ color: "red" }}>
+                                {errors.lastname}
+                              </div>
+                            ) : null}
+                          </div>
+                          <div>
+                            <label
+                              for="user name"
+                              className="block mb-2 text-sm"
+                            >
+                              User name
+                            </label>
+                            <input
+                              type="text"
+                              name="username"
+                              value={newUser.username}
+                              onChange={handleChange}
+                              id="user name"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                            />
+                            {errors.username && touched.username ? (
+                              <div style={{ color: "red" }}>
+                                {errors.username}
+                              </div>
+                            ) : null}
+                          </div>
+
+                          <div>
+                            <label
+                              for="email_verify"
+                              className="block mb-2 text-sm"
+                            >
+                              Status
+                            </label>
+                            <input
+                              type="text"
+                              name="email_verify"
+                              value={newUser.email_verify}
+                              onChange={handleChange}
+                              id="email_verify"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                            />
+                            {errors.email_verify && touched.email_verify ? (
+                              <div style={{ color: "red" }}>
+                                {errors.email_verify}
+                              </div>
+                            ) : null}
+                          </div>
+                          <div>
+                            <label
+                              for="file-upload"
+                              className="block mb-2 text-sm"
+                            >
+                              Photo
+                            </label>
+                            <div className="border rounded-md border-gray-700 bg-gray-900">
+                              <input
+                                type="file"
+                                name="image"
+                                id="file-upload"
+                                onChange={(event) => {
+                                  setUpload(event.target.files[0]);
+                                }}
+                              />
+                              <label
+                                htmlFor="file-upload"
+                                className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer"
+                              >
+                                <p className="z-10 text-xs font-light text-center text-gray-500">
+                                  Upload file (JPG,PNG,...)
+                                </p>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-6 h-6"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                                  />
+                                </svg>
+                              </label>
+                            </div>
+
+                            {errorImage && !errors.image ? (
+                              <p className="text-red-700">Ảnh không hợp lệ !</p>
+                            ) : null}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <button
+                              className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                              onClick={handleSubmit}
+                              type="submit"
+                            >
+                              UPDATE
+                            </button>
+                            <button
+                              className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                              type="button"
+                              onClick={() => setShowModal(false)}
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    )}
+                  </Formik>
+                </div>
+                {/*footer*/}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </div>
   );
 }
