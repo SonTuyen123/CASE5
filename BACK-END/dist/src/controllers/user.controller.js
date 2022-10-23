@@ -140,10 +140,6 @@ class UserController {
     static async deleteUsers(req, res) {
         let id = req.body;
         console.log(id);
-        await user_schema_1.default.deleteOne({
-            _id: `${id}`,
-        });
-        return res.status(200).json({ message: "delete thanh cong" });
     }
     static async showFormEditCustomer(req, res) {
         let id = req.query.id;
