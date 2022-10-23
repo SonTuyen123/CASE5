@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import loginImg from "../assets/login.jpg";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,7 @@ export default function Login() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 h-screen w-full">
       <div className="hidden sm:block">
-        <img className="w-full h-full object-cover" src={loginImg} alt="" />
+        <img className="w-full h-full object-cover"  alt="" />
       </div>
 
       <div className="bg-gray-800 flex flex-col justify-center">
@@ -54,7 +53,7 @@ export default function Login() {
                   let token = JSON.stringify(res.data.data);
                   localStorage.setItem("token", token);
                   Swal.fire("Đăng nhập thành công !").then((result) => {
-                    navigate("/admin");
+                    navigate("/home");
                   });
                 }
               })

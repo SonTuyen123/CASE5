@@ -1,11 +1,11 @@
 import Login from "./pages/Login";
-import { Route, Routes } from "react-router-dom";
-import { Admins } from "./components/Products/Admins";
+import {Route, Routes} from "react-router-dom";
+import {Admins} from "./components/Products/Admins";
 import Demo from "./components/UpLoadImg/Demo";
 import Register from "./pages/Register";
 import Modals from "./components/Products/Demo2";
-import { Verify } from "./pages/verify/Verify";
-import { Checks } from "./pages/checkVerify/Checks";
+import {Verify} from "./pages/verify/Verify";
+import {Checks} from "./pages/checkVerify/Checks";
 import ListUser from "./components/Products/ListUser";
 import Createmp3 from "./components/Products/Createmp3";
 
