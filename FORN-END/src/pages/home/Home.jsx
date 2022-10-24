@@ -27,7 +27,7 @@ const Home = () => {
     })
     .catch((e) => console.log(e.message));
   }, [url]);
-
+  console.log(1);
 
   return (
     <>
