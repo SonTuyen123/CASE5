@@ -9,6 +9,7 @@ const userSchemas = new mongoose_1.default.Schema({
     lastname: String,
     username: String,
     email: String,
+    role: String,
     phone: String,
     email_verify: String,
     image: String,

@@ -5,8 +5,8 @@ import { userValidation, validateUserSignUp } from "../middleware/validation";
 
 import { UserController } from "../controllers/user.controller";
 
-router.post("/findUser", (req, res, next) => {
-  UserController.findUser(req, res).catch((err) => {
+router.post("/login", (req, res, next) => {
+  UserController.login(req, res).catch((err) => {
     next(err);
   });
 });
@@ -20,6 +20,17 @@ router.post(
     });
   }
 );
+
+router.post("/upload", (req, res, next) => {
+  UserController.upload(req, res).catch((err) => {
+    next(err);
+  });
+});
+router.get("/listMp3", (req, res, next) => {
+  UserController.listMp3(req, res).catch((err) => {
+    next(err);
+  });
+});
 router.post("/verify", (req, res, next) => {
   UserController.verify(req, res).catch((err) => {
     next(err);
@@ -30,11 +41,30 @@ router.get("/list", async (req, res, next) => {
     next(err);
   });
 });
-router.delete("/delete/:id", async (req, res, next) => {
+
+router.get("/users/:id", async (req, res, next) => {
+  UserController.findUser(req, res).catch((err) => {
+    next(err);
+  });
+});
+router.post("/UploadImageUser", async (req, res, next) => {
+  UserController.UploadImgUser(req, res).catch((err) => {
+    next(err);
+  });
+});
+
+router.post("/delete", async (req, res, next) => {
   UserController.deleteUsers(req, res).catch((err) => {
     next(err);
   });
 });
+router.post("/deleteMp3", async (req, res, next) => {
+  UserController.deleteMp3(req, res).catch((err) => {
+    next(err);
+  });
+});
+
+
 router.get("/edit", async (req, res, next) => {
   UserController.showFormEditCustomer(req, res).catch((err) => {
     next(err);

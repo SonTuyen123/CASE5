@@ -7,13 +7,23 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const validation_1 = require("../middleware/validation");
 const user_controller_1 = require("../controllers/user.controller");
-router.post("/findUser", (req, res, next) => {
-    user_controller_1.UserController.findUser(req, res).catch((err) => {
+router.post("/login", (req, res, next) => {
+    user_controller_1.UserController.login(req, res).catch((err) => {
         next(err);
     });
 });
 router.post("/register", validation_1.validateUserSignUp, validation_1.userValidation, (req, res, next) => {
     user_controller_1.UserController.register(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.post("/upload", (req, res, next) => {
+    user_controller_1.UserController.upload(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.get("/listMp3", (req, res, next) => {
+    user_controller_1.UserController.listMp3(req, res).catch((err) => {
         next(err);
     });
 });
@@ -27,8 +37,23 @@ router.get("/list", async (req, res, next) => {
         next(err);
     });
 });
-router.delete("/delete/:id", async (req, res, next) => {
+router.get("/users/:id", async (req, res, next) => {
+    user_controller_1.UserController.findUser(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.post("/UploadImageUser", async (req, res, next) => {
+    user_controller_1.UserController.UploadImgUser(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.post("/delete", async (req, res, next) => {
     user_controller_1.UserController.deleteUsers(req, res).catch((err) => {
+        next(err);
+    });
+});
+router.post("/deleteMp3", async (req, res, next) => {
+    user_controller_1.UserController.deleteMp3(req, res).catch((err) => {
         next(err);
     });
 });

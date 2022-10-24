@@ -1,30 +1,80 @@
 import { Request, Response } from "express";
 import Users from "../models/schemas/user.schema";
+import ListMp3 from "../models/schemas/listmp3.schema";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import { senMail } from "../utils/mailer";
 dotenv.config();
 
 export class UserController {
-  static async findUser(req: Request, res: Response) {
+  static async upload(req: Request, res: Response) {
+    let data = {
+      name: req.body.name,
+      category: req.body.category,
+      singer: req.body.singer,
+      image: req.body.image,
+      mp3: req.body.mp3,
+      user_id: "",
+    };
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 19 ~ UserController ~ upload ~ data",
+      data
+    );
+    await ListMp3.create(data, (err, user) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(user);
+      }
+    });
+    return res.status(200).json({ message: "Thêm thành công !" });
+  }
+  static async listMp3(req: Request, res: Response) {
+    const mp3list = await ListMp3.find();
+    return res.status(200).json({ list: mp3list });
+  }
+
+  static async login(req: Request, res: Response) {
     let data = {
       email: req.body.email,
       password: req.body.password,
     };
-    console.log(data);
     let user = await Users.findOne({ email: data.email });
-    if (user) {
-      if (user.password === data.password) {
-        return res.status(200).json({ message: "Đăng nhập thành công !" });
-      } else {
-        return res
-          .status(200)
-          .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
-      }
-    } else {
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 44 ~ UserController ~ login ~ user",
+      user
+    );
+    if (!user) {
       return res
         .status(200)
         .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
+    } else if (!user.email_verify) {
+      return res.status(200).json({
+        message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
+      });
+    } else {
+      let comparePassword = await bcrypt.compare(data.password, user.password);
+      if (!comparePassword) {
+        return res
+          .status(200)
+          .json({ message: "Sai mật khẩu ! Vui lòng thử lại !" });
+      } else {
+        let payload = {
+          username: user.username,
+          password: user.password,
+        };
+        let secretKey = process.env.SECRET_KEY;
+        let token = await jwt.sign(payload, secretKey, {
+          expiresIn: 36000000,
+        });
+        const response = {
+          token: token,
+        };
+        return res
+          .status(200)
+          .json({ message: "Đăng nhập thành công !", data: response });
+      }
     }
   }
 
@@ -52,14 +102,47 @@ export class UserController {
     const customer = await Users.find();
     return res.status(200).json({ user: customer });
   }
-  static async deleteUsers(req: Request, res: Response) {
+  static async findUser(req: Request, res: Response) {
     let id = req.params.id;
-    console.log(id);
+
+    let User = await Users.findOne({
+      _id: id,
+    });
+    
+    return res.status(200).json({ user: User });
+  }
+
+  static async UploadImgUser(req: Request, res: Response) {
+    let data = req.body;
+    console.log(data);
+  }
+
+  static async deleteUsers(req: Request, res: Response) {
+    let id = req.body.id;
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
+      id
+    );
     await Users.deleteOne({
       _id: `${id}`,
     });
     return res.status(200).json({ message: "delete thanh cong" });
   }
+  static async deleteMp3(req: Request, res: Response) {
+    let id = req.body.id;
+    console.log(
+      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
+      id
+    );
+    await ListMp3.deleteOne({
+      _id: `${id}`,
+    });
+    return res.status(200).json({ message: "delete mp3 thanh cong" });
+  }
+
+
+ 
+
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;
     const custormerSelect = await Users.findOne({
@@ -103,7 +186,6 @@ export class UserController {
         username: user.username,
         email: user.email,
         password: user.password,
-        role: "user",
         email_verify: false,
       };
 
@@ -137,11 +219,11 @@ export class UserController {
     }
   }
   static async verify(req: Request, res: Response) {
-    // console.log(req.body);
-    bcrypt.compare(req.body.data.email, req.body.data.token, (err, result) => {
+    console.log(req.body);
+    bcrypt.compare(req.body.email, req.body.token, (err, result) => {
       if (result === true) {
         Users.findOneAndUpdate(
-          { email: `${req.body.data.email}` },
+          { email: `${req.body.email}` },
           { email_verify: true },
           function (err, docs) {
             if (err) {

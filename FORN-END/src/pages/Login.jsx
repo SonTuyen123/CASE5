@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import loginImg from "../assets/login.jpg";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -16,13 +15,17 @@ export default function Login() {
   const [errorsMessage, setErrorsMessage] = useState("");
 
   const login = async (data) => {
-    return await axios.post("http://localhost:8080/admin/findUser", data);
+    return await axios.post("http://localhost:8080/admin/login", data);
   };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 h-screen w-full">
       <div className="hidden sm:block">
-        <img className="w-full h-full object-cover" src={loginImg} alt="" />
+        <img
+          className="w-full h-full object-cover"
+          src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80"
+          alt=""
+        />
       </div>
 
       <div className="bg-gray-800 flex flex-col justify-center">
@@ -44,9 +47,19 @@ export default function Login() {
                   setErrorsMessage(data);
                 } else if (data === "Sai mật khẩu ! Vui lòng thử lại !") {
                   setErrorsMessage(data);
+                } else if (
+                  data ===
+                  "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !"
+                ) {
+                  setErrorsMessage(data);
                 } else {
+                  console.log(res.data.data);
+                  let token = JSON.stringify(res.data.data);
+                  localStorage.setItem("token", token);
                   Swal.fire("Đăng nhập thành công !").then((result) => {
-                    navigate("/admin");
+
+                    
+                    navigate("/home");
                   });
                 }
               })
@@ -66,23 +79,24 @@ export default function Login() {
 
               <div className="flex flex-col text-gray-400 py-2">
                 {errorsMessage ? (
-                  <a className="text-red-500">
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    {errorsMessage}
-                  </a>
+                  <div className="alert alert-error shadow-lg">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-current flex-shrink-0 h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{errorsMessage}</span>
+                    </div>
+                  </div>
                 ) : null}
                 <label>Email</label>
                 <input

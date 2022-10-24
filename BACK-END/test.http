@@ -13,3 +13,21 @@ Content-Type: application/json
 }
 ###
 DELETE  http://localhost:8080/admin/delete/634b7da9c01fb6090919e190
+###
+POST  http://localhost:8080/admin/login
+Content-Type: application/json
+
+{
+      "email":"hanhngao3010@gmail.com",
+      "password": "123123"
+}
+###
+GET http://localhost:8080/admin/listMp3
+###
+
+POST  http://localhost:8080/admin/findUser
+Content-Type: application/json
+
+{
+      "id":"6350ffdb205f3925d49c95ec"
+}
