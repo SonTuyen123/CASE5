@@ -4,6 +4,7 @@ declare const Users: mongoose.Model<{
     lastname?: string;
     username?: string;
     email?: string;
+    role?: string;
     phone?: string;
     email_verify?: string;
     image?: string;
@@ -13,6 +14,7 @@ declare const Users: mongoose.Model<{
     lastname?: string;
     username?: string;
     email?: string;
+    role?: string;
     phone?: string;
     email_verify?: string;
     image?: string;

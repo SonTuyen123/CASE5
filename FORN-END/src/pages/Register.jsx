@@ -78,9 +78,11 @@ export default function Register() {
                         "verifyRegister",
                         JSON.stringify(res.data)
                       );
-                      Swal.fire("Xác thuuwc email !").then((result) => {
-                        navigate("/register/checkverify");
-                      });
+                      Swal.fire("Đăng ký tài khoản thành công !").then(
+                        (result) => {
+                          navigate("/register/checkverify");
+                        }
+                      );
                     }
                   })
                   .catch((e) => {

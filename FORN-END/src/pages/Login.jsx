@@ -21,7 +21,11 @@ export default function Login() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 h-screen w-full">
       <div className="hidden sm:block">
-        <img className="w-full h-full object-cover"  alt="" />
+        <img
+          className="w-full h-full object-cover"
+          src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80"
+          alt=""
+        />
       </div>
 
       <div className="bg-gray-800 flex flex-col justify-center">
@@ -53,6 +57,8 @@ export default function Login() {
                   let token = JSON.stringify(res.data.data);
                   localStorage.setItem("token", token);
                   Swal.fire("Đăng nhập thành công !").then((result) => {
+
+                    
                     navigate("/home");
                   });
                 }

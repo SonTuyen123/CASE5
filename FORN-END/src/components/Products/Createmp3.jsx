@@ -7,6 +7,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import parse from "url-parse";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const inputSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
@@ -15,17 +16,15 @@ const inputSchema = Yup.object().shape({
 });
 
 export default function Createmp3() {
+  let navigate = useNavigate();
+
+
   const [Upload, setUpload] = useState([]);
   const [mp3List, setMp3List] = useState([]);
   const [imageList, setImageList] = useState([]);
   const [errorMessage, setErrorMessage] = useState(false);
 
-  const [urlMp3, setUrlMp3] = useState("");
   const [urlImage, setUrlImage] = useState("");
-
-  const uploadFirebase = async (link, data) => {
-    return await uploadBytes(link, data);
-  };
 
   const UploadApi = async (data) => {
     // let token = JSON.parse(localStorage.getItem("token"));
@@ -34,6 +33,7 @@ export default function Createmp3() {
   };
 
   let fileupload = useRef;
+  let setFlag = useRef;
 
   return (
     <div className="bg-indigo-50 flex-grow py-12 px-10">
@@ -168,54 +168,57 @@ export default function Createmp3() {
             singer: "",
           }}
           validationSchema={inputSchema}
-          onSubmit={async (values, { resetForm }) => {
+          onSubmit={async (values, { resetForm, setSubmitting }) => {
+            let validImageTypes = ["image/gif", "image/jpeg", "image/png"];
+            let validMp3Types = ["audio/mpeg"];
             let types = /(\.|\/)(mp3)$/i;
-            console.log(Upload[1]);
+            console.log(Upload);
 
             fileupload = {};
             for (let i = 0; i < Upload.length; i++) {
               fileupload.name = values.name;
               fileupload.category = values.category;
               fileupload.singer = values.singer;
-
-              if (Upload.length == 0) return;
-              const mp3Ref = ref(storage, `mp3/${Upload[i].name}`);
-              await uploadBytes(mp3Ref, Upload[i])
-                .then(async (res) => {
-                  await getDownloadURL(res.ref).then((url) => {
-                    let data = parse(url).pathname;
-                    console.log(data);
-                    if (types.test(data)) {
-                      fileupload.mp3 = url;
-                    } else {
-                      fileupload.image = url;
-                    }
+              if (Upload.length === 0) {
+                return (setFlag.status = 1);
+              } else {
+                setFlag.status = 2;
+                console.log(1);
+                const mp3Ref = ref(storage, `mp3/${Upload[i].name}`);
+                await uploadBytes(mp3Ref, Upload[i])
+                  .then(async (res) => {
+                    await getDownloadURL(res.ref).then((url) => {
+                      let data = parse(url).pathname;
+                      // console.log(data);
+                      if (types.test(data)) {
+                        fileupload.mp3 = url;
+                      } else {
+                        fileupload.image = url;
+                      }
+                    });
+                  })
+                  .catch((e) => {
+                    console.log(e);
                   });
+              }
+            }
+            // console.log(fileupload);
+            console.log(setFlag);
+            if ((setFlag.status = 2)) {
+              UploadApi(fileupload)
+                .then((res) => {
+                  if (res.data.message === "Thêm thành công !") {
+                    Swal.fire("Thêm bài hát thành công !").then((result) => {
+                      navigate("/admin/listmp3");
+                    });
+                  }
                 })
                 .catch((e) => {
                   console.log(e);
                 });
+            } else {
+              Swal.fire("Không được để trống Image Mp3 hoặc File Mp3 !");
             }
-            console.log(fileupload);
-            UploadApi(fileupload)
-              .then((res) => {
-                if (res.data.message === "Thêm thành công !") {
-                  Swal.fire("Đăng nhập thành công !").then((result) => {
-                    resetForm({
-                      values: {
-                        name: "",
-                        category: "",
-                        singer: "",
-                        image: "",
-                        mp3: "",
-                      },
-                    });
-                  });
-                }
-              })
-              .catch((e) => {
-                console.log(e);
-              });
           }}
         >
           {({ errors, touched, isValidating, handleChange, handleSubmit }) => (
