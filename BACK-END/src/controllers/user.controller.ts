@@ -108,13 +108,27 @@ export class UserController {
     let User = await Users.findOne({
       _id: id,
     });
-    
+
     return res.status(200).json({ user: User });
   }
 
   static async UploadImgUser(req: Request, res: Response) {
     let data = req.body;
     console.log(data);
+    let id = data.id;
+
+    await Users.updateOne(
+      { _id: id },
+      {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        username: data.username,
+        email_verify: data.email_verify,
+        image: data.image,
+      }
+    );
+
+    return res.status(200).json({ message: "edit thanh cong !" });
   }
 
   static async deleteUsers(req: Request, res: Response) {
@@ -139,9 +153,6 @@ export class UserController {
     });
     return res.status(200).json({ message: "delete mp3 thanh cong" });
   }
-
-
- 
 
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;
