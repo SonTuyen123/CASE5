@@ -28,7 +28,6 @@ const Search = (props) =>{
 
   useOutsideAlerter(wrapperRef);
 
-  console.log(wrapperRef);
   const handleChange = (e) =>{
     setValueSearch(e.target.value)
     getApi()
@@ -45,7 +44,7 @@ const Search = (props) =>{
   }
 
   function handleClickOutSide(e) {
-    console.log(e.target);
+    document.querySelector('.suggest').style.display = 'none' ;
   }
 
   const handleClick = (id) =>{

@@ -9,20 +9,26 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setData } from "../../redux/features/listMusicSlice";
 import "../../../src/style.css";
+export const getApi = async() =>{
+  let data = await axios
+      .get("http://localhost:8080/admin/listMp3")
+      return data
+}
 const Home = () => {
   let [listMusic, setListMusic] = useState();
   let url = useSelector((res) => res.player.url);
+  let data = useSelector(res => res.listMussic.data)
   let dispatch = useDispatch();
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/admin/listMp3")
-      .then((res) => {
-        let data = res.data.list.reverse();
-        setListMusic(data);
-        dispatch(setData(res.data.list));
-      })
-      .catch((e) => console.log(e.message));
+    getApi()
+    .then((res) => {
+      let data = res.data.list.reverse();
+      dispatch(setData(data));
+    })
+    .catch((e) => console.log(e.message));
   }, [url]);
+
+
   return (
     <>
       <div className="app">
@@ -37,8 +43,8 @@ const Home = () => {
             nhất có thể nhé{" "}
           </h2>
           <div class="row1 play-list">
-            {listMusic &&
-              listMusic.map((element) => {
+            {data &&
+              data.map((element) => {
                 return (
                   <>
                     <div class="col-1 ll-4" key={element.id}>
