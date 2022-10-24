@@ -10,7 +10,6 @@ const userSchemas = new mongoose_1.default.Schema({
     username: String,
     email: String,
     role: String,
-    phone: String,
     email_verify: String,
     image: String,
     password: String,

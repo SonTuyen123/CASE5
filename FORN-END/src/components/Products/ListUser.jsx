@@ -31,7 +31,7 @@ export default function ListUser() {
   const [newUser, setNewUser] = useState([]);
   const [errorImage, setErrorImage] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [Upload, setUpload] = useState([]);
+  const [Upload, setUpload] = useState();
   const [flag, setFlag] = useState();
 
   const listUerApi = async () => {
@@ -77,16 +77,14 @@ export default function ListUser() {
     setIdDeleteUser(value);
   };
 
-  // useEffect(() => {
-  //   deleteUerApi({ id: idDeleteUser })
-  //     .then((res) => {
-  //       console.log(res);
-  //       setFlag(res);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  // }, [idDeleteUser]);
+  useEffect(() => {
+    deleteUerApi({ id: idDeleteUser })
+      .then((res) => {
+        console.log(res);
+        setFlag(res);
+      })
+      .catch((e) => {});
+  }, [idDeleteUser]);
 
   const handleEditUser = (id) => {
     findUerApi(id)
@@ -94,10 +92,29 @@ export default function ListUser() {
         setNewUser(res.data.user);
         setShowModal(true);
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => {});
   };
+
+  const imageRef = useRef(null);
+  function useDisplayImage() {
+    const [result, setResult] = useState("");
+
+    function uploader(e) {
+      const imageFile = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.addEventListener("load", (e) => {
+        setResult(e.target.result);
+      });
+
+      reader.readAsDataURL(imageFile);
+    }
+
+    return { result, uploader };
+  }
+
+  const { result, uploader } = useDisplayImage();
+  console.log(Upload);
 
   return (
     <div className="bg-indigo-50 flex-grow py-12 px-10">
@@ -238,7 +255,11 @@ export default function ListUser() {
                         <div className="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                           <img
                             className="object-cover w-full h-full rounded-full"
-                            src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
+                            src={
+                              item.image
+                                ? item.image
+                                : "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
+                            }
                             alt
                             loading="lazy"
                           />
@@ -392,33 +413,37 @@ export default function ListUser() {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                  <h3 className="text-3xl font-semibold">Update User</h3>
+                  <h3 className="text-3xl font-semibold ">Update User</h3>
                   <a onClick={() => setShowModal(false)}>
                     <i class="fa-solid fa-x"></i>
                   </a>
                 </div>
                 {/*body*/}
-                <div className="relative p-6 flex-auto">
+                <div
+                  className="relative p-6 flex-auto"
+                  style={{ width: "600px" }}
+                >
                   <Formik
                     initialValues={{
                       firstname: newUser.firstname,
                       lastname: newUser.lastname,
                       username: newUser.username,
                       email_verify: newUser.email_verify,
+                      image: newUser.image,
                     }}
                     validationSchema={UpdateSchema}
                     onSubmit={(values, { resetForm }) => {
                       let image = Upload["type"];
                       console.log(
                         "🚀 ~ file: ListUser.jsx ~ line 388 ~ ListUser ~ image",
-                        image
+                        Upload
                       );
 
                       if (!validImageTypes.includes(image)) {
                         setErrorImage(true);
                       } else {
                         setErrorImage(false);
-                        const imageRef = ref(storage, `image/${Upload}`);
+                        const imageRef = ref(storage, `image/${Upload.name}`);
                         uploadBytes(imageRef, Upload).then((snaphost) => {
                           getDownloadURL(snaphost.ref).then((url) => {
                             UploadImgApi({
@@ -428,7 +453,16 @@ export default function ListUser() {
                               lastname: values.lastname,
                               username: values.username,
                               email_verify: values.email_verify,
-                            });
+                            })
+                              .then((res) => {
+                                console.log(res);
+                                setShowModal(false);
+                                setUpload("");
+                                setFlag(res);
+                              })
+                              .catch((e) => {
+                                console.log(e);
+                              });
                           });
                         });
                       }
@@ -448,153 +482,172 @@ export default function ListUser() {
                         action=""
                         className="space-y-12 ng-untouched ng-pristine ng-valid"
                       >
-                        <div className="space-y-4">
-                          <div className="hidden">
-                            <label
-                              for="first name"
-                              className="block mb-2 text-sm"
-                            >
-                              Id
-                            </label>
-                            <input
-                              type="text"
-                              name="id"
-                              onChange={handleChange}
-                              id="first name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                            />
-                          </div>
-                          <div>
-                            <label
-                              for="first name"
-                              className="block mb-2 text-sm"
-                            >
-                              First name
-                            </label>
-                            <input
-                              type="text"
-                              name="firstname"
-                              value={values.firstname}
-                              onChange={handleChange}
-                              id="first name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                            />
-                            {errors.firstname && touched.firstname ? (
-                              <div style={{ color: "red" }}>
-                                {errors.firstname}
-                              </div>
-                            ) : null}
-                          </div>
-                          <div>
-                            <label
-                              for="last name"
-                              className="block mb-2 text-sm"
-                            >
-                              Last name
-                            </label>
-                            <input
-                              type="text"
-                              name="lastname"
-                              value={values.lastname}
-                              onChange={handleChange}
-                              id="last name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                            />
-                            {errors.lastname && touched.lastname ? (
-                              <div style={{ color: "red" }}>
-                                {errors.lastname}
-                              </div>
-                            ) : null}
-                          </div>
-                          <div>
-                            <label
-                              for="user name"
-                              className="block mb-2 text-sm"
-                            >
-                              User name
-                            </label>
-                            <input
-                              type="text"
-                              name="username"
-                              value={values.username}
-                              onChange={handleChange}
-                              id="user name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                            />
-                            {errors.username && touched.username ? (
-                              <div style={{ color: "red" }}>
-                                {errors.username}
-                              </div>
-                            ) : null}
-                          </div>
-
-                          <div>
-                            <label
-                              for="email_verify"
-                              className="block mb-2 text-sm"
-                            >
-                              Status
-                            </label>
-                            <input
-                              type="text"
-                              name="email_verify"
-                              value={newUser.email_verify}
-                              onChange={handleChange}
-                              id="email_verify"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                            />
-                            {errors.email_verify && touched.email_verify ? (
-                              <div style={{ color: "red" }}>
-                                {errors.email_verify}
-                              </div>
-                            ) : null}
-                          </div>
-                          <div>
-                            <label
-                              for="file-upload"
-                              className="block mb-2 text-sm"
-                            >
-                              Photo
-                            </label>
-                            <div className="border rounded-md border-gray-700 bg-gray-900">
-                              <input
-                                type="file"
-                                name="image"
-                                id="file-upload"
-                                onChange={(event) => {
-                                  setUpload(event.target.files[0]);
-                                }}
-                              />
+                        <div className="space-y-4 grid grid-cols-2 ">
+                          <div className="m-2">
+                            <div className="hidden">
                               <label
-                                htmlFor="file-upload"
-                                className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer"
+                                for="first name"
+                                className="block mb-2 text-sm"
                               >
-                                <p className="z-10 text-xs font-light text-center text-gray-500">
-                                  Upload file (JPG,PNG,...)
-                                </p>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-6 h-6"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                                  />
-                                </svg>
+                                Id
                               </label>
+                              <input
+                                type="text"
+                                name="id"
+                                onChange={handleChange}
+                                id="first name"
+                                className="w-full px-3 py-2 border rounded-md dark:border-gray-700  dark:text-gray-900"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="first name"
+                                className="block mb-2 text-sm"
+                              >
+                                First name
+                              </label>
+                              <input
+                                type="text"
+                                name="firstname"
+                                value={values.firstname}
+                                onChange={handleChange}
+                                id="first name"
+                                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
+                              />
+                              {errors.firstname && touched.firstname ? (
+                                <div style={{ color: "red" }}>
+                                  {errors.firstname}
+                                </div>
+                              ) : null}
+                            </div>
+                            <div>
+                              <label
+                                for="last name"
+                                className="block mb-2 text-sm"
+                              >
+                                Last name
+                              </label>
+                              <input
+                                type="text"
+                                name="lastname"
+                                value={values.lastname}
+                                onChange={handleChange}
+                                id="last name"
+                                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
+                              />
+                              {errors.lastname && touched.lastname ? (
+                                <div style={{ color: "red" }}>
+                                  {errors.lastname}
+                                </div>
+                              ) : null}
+                            </div>
+                            <div>
+                              <label
+                                for="user name"
+                                className="block mb-2 text-sm"
+                              >
+                                User name
+                              </label>
+                              <input
+                                type="text"
+                                name="username"
+                                value={values.username}
+                                onChange={handleChange}
+                                id="user name"
+                                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
+                              />
+                              {errors.username && touched.username ? (
+                                <div style={{ color: "red" }}>
+                                  {errors.username}
+                                </div>
+                              ) : null}
                             </div>
 
-                            {errorImage && !errors.image ? (
-                              <p className="text-red-700">Ảnh không hợp lệ !</p>
-                            ) : null}
+                            <div>
+                              <label
+                                for="email_verify"
+                                className="block mb-2 text-sm"
+                              >
+                                Status
+                              </label>
+
+                              <select
+                                type="text"
+                                name="email_verify"
+                                value={values.email_verify}
+                                onChange={handleChange}
+                                id="email_verify"
+                                className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
+                              >
+                                <option value="true">True</option>
+                                <option selected value="false">
+                                  False
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div>
+                            {" "}
+                            <div>
+                              <div className="avatar">
+                                <div className="w-24 ml-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                  {result ? (
+                                    <img ref={imageRef} src={result} alt="" />
+                                  ) : (
+                                    <img
+                                      src={values.image}
+                                      ref={imageRef}
+                                      alt=""
+                                    />
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className=" ml-2 rounded-md border-gray-700 dark:text-gray-900">
+                                <input
+                                  type="file"
+                                  name="image"
+                                  id="file-upload"
+                                  className="hidden"
+                                  accept="image/gif, image/jpeg, image/png"
+                                  onChange={(event) => {
+                                    setUpload(event.target.files[0]);
+                                    uploader(event);
+                                  }}
+                                />
+                                <label
+                                  htmlFor="file-upload"
+                                  className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer"
+                                >
+                                  <p className="z-10 text-xs font-light text-center text-gray-500">
+                                    Upload file (JPG,PNG,...)
+                                  </p>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                                    />
+                                  </svg>
+                                </label>
+                              </div>
+
+                              {errorImage && !errors.image ? (
+                                <p className="text-red-700">
+                                  Ảnh không hợp lệ !
+                                </p>
+                              ) : null}
+                            </div>
                           </div>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 ml-2">
                           <div>
                             <button
                               className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"

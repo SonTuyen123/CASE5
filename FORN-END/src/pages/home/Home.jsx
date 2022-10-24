@@ -9,26 +9,23 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setData } from "../../redux/features/listMusicSlice";
 import "../../../src/style.css";
-export const getApi = async() =>{
-  let data = await axios
-      .get("http://localhost:8080/admin/listMp3")
-      return data
-}
+export const getApi = async () => {
+  let data = await axios.get("http://localhost:8080/admin/listMp3");
+  return data;
+};
 const Home = () => {
   let [listMusic, setListMusic] = useState();
   let url = useSelector((res) => res.player.url);
-  let data = useSelector(res => res.listMussic.data)
+  let data = useSelector((res) => res.listMussic.data);
   let dispatch = useDispatch();
   useEffect(() => {
     getApi()
-    .then((res) => {
-      let data = res.data.list.reverse();
-      dispatch(setData(data));
-    })
-    .catch((e) => console.log(e.message));
+      .then((res) => {
+        let data = res.data.list;
+        dispatch(setData(data));
+      })
+      .catch((e) => console.log(e.message));
   }, [url]);
-  console.log(1);
-
   return (
     <>
       <div className="app">
@@ -43,7 +40,7 @@ const Home = () => {
             nhất có thể nhé{" "}
           </h2>
           <div class="row1 play-list">
-            {data.length !== 0 ?
+            {data.length !== 0 ? (
               data.map((element) => {
                 return (
                   <>
@@ -56,7 +53,21 @@ const Home = () => {
                     </div>
                   </>
                 );
-              }) : <p style={{textAlign : 'center' , position : 'relative' , left : '50%' , transform : 'translateX(-50%)' , fontSize : '24px' , color : 'red' }}>Bài hát tìm kiếm không tồn tại</p>}
+              })
+            ) : (
+              <p
+                style={{
+                  textAlign: "center",
+                  position: "relative",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontSize: "24px",
+                  color: "red",
+                }}
+              >
+                Bài hát tìm kiếm không tồn tại
+              </p>
+            )}
           </div>
           <div className="footter">
             <Footer />
