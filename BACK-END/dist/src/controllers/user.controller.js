@@ -127,7 +127,7 @@ class UserController {
         return res.status(200).json({ user: customer });
     }
     static async findUser(req, res) {
-        let id = req.body.id;
+        let id = req.params.id;
         let User = await user_schema_1.default.findOne({
             _id: id,
         });

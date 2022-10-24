@@ -34,12 +34,11 @@ export default function ListUser() {
   const [Upload, setUpload] = useState([]);
   const [flag, setFlag] = useState();
 
-
   const listUerApi = async () => {
     return await axios.get("http://localhost:8080/admin/list");
   };
-  const findUerApi = async (data) => {
-    return await axios.post("http://localhost:8080/admin/findUser", data);
+  const findUerApi = async (id) => {
+    return await axios.get("http://localhost:8080/admin/users/" + id);
   };
   const deleteUerApi = async (data) => {
     return await axios.post("http://localhost:8080/admin/delete", data);
@@ -60,15 +59,15 @@ export default function ListUser() {
       });
   }, [flag]);
 
-  useEffect(() => {
-    findUerApi({ id: idUser })
-      .then((res) => {
-        setNewUser(res.data.user);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [idUser]);
+  // useEffect(() => {
+  //   findUerApi({ id: idUser })
+  //     .then((res) => {
+  //       setNewUser(res.data.user);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }, [idUser]);
 
   const handleDeleteUser = (value) => {
     console.log(
@@ -78,19 +77,26 @@ export default function ListUser() {
     setIdDeleteUser(value);
   };
 
-  useEffect(() => {
-    deleteUerApi({ id: idDeleteUser })
+  // useEffect(() => {
+  //   deleteUerApi({ id: idDeleteUser })
+  //     .then((res) => {
+  //       console.log(res);
+  //       setFlag(res);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }, [idDeleteUser]);
+
+  const handleEditUser = (id) => {
+    findUerApi(id)
       .then((res) => {
-        console.log(res);
-        setFlag(res);
+        setNewUser(res.data.user);
+        setShowModal(true);
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [idDeleteUser]);
-  const handleEditUser = (value) => {
-    setIdUser(value);
-    setShowModal(true);
   };
 
   return (
@@ -224,9 +230,9 @@ export default function ListUser() {
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
-              {datauser.map((item) => (
-                <tbody className="bg-white divide-y dark:divide-gray-700 ">
-                  <tr className="text-black dark:text-gray-400">
+              <tbody className="bg-white divide-y dark:divide-gray-700 ">
+                {datauser.map((item) => (
+                  <tr key={item._id} className="text-black dark:text-gray-400">
                     <td className="px-4 py-3">
                       <div className="flex items-center text-sm">
                         <div className="relative hidden w-8 h-8 mr-3 rounded-full md:block">
@@ -285,8 +291,8 @@ export default function ListUser() {
                       </button>
                     </td>
                   </tr>
-                </tbody>
-              ))}
+                ))}
+              </tbody>
             </table>
           </div>
           <div className="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 ">
@@ -395,10 +401,10 @@ export default function ListUser() {
                 <div className="relative p-6 flex-auto">
                   <Formik
                     initialValues={{
-                      firstname: "",
-                      lastname: "",
-                      username: "",
-                      email_verify: "",
+                      firstname: newUser.firstname,
+                      lastname: newUser.lastname,
+                      username: newUser.username,
+                      email_verify: newUser.email_verify,
                     }}
                     validationSchema={UpdateSchema}
                     onSubmit={(values, { resetForm }) => {
@@ -429,8 +435,10 @@ export default function ListUser() {
                     }}
                   >
                     {({
+                      values,
                       errors,
                       touched,
+
                       isValidating,
                       handleChange,
                       handleSubmit,
@@ -451,7 +459,6 @@ export default function ListUser() {
                             <input
                               type="text"
                               name="id"
-                              value={newUser._id}
                               onChange={handleChange}
                               id="first name"
                               className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
@@ -467,7 +474,7 @@ export default function ListUser() {
                             <input
                               type="text"
                               name="firstname"
-                              value={newUser.firstname}
+                              value={values.firstname}
                               onChange={handleChange}
                               id="first name"
                               className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
@@ -488,7 +495,7 @@ export default function ListUser() {
                             <input
                               type="text"
                               name="lastname"
-                              value={newUser.lastname}
+                              value={values.lastname}
                               onChange={handleChange}
                               id="last name"
                               className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
@@ -509,7 +516,7 @@ export default function ListUser() {
                             <input
                               type="text"
                               name="username"
-                              value={newUser.username}
+                              value={values.username}
                               onChange={handleChange}
                               id="user name"
                               className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"

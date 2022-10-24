@@ -42,7 +42,7 @@ router.get("/list", async (req, res, next) => {
   });
 });
 
-router.post("/findUser", async (req, res, next) => {
+router.get("/users/:id", async (req, res, next) => {
   UserController.findUser(req, res).catch((err) => {
     next(err);
   });

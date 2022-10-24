@@ -103,13 +103,15 @@ export class UserController {
     return res.status(200).json({ user: customer });
   }
   static async findUser(req: Request, res: Response) {
-    let id = req.body.id;
+    let id = req.params.id;
 
     let User = await Users.findOne({
       _id: id,
     });
+    
     return res.status(200).json({ user: User });
   }
+
   static async UploadImgUser(req: Request, res: Response) {
     let data = req.body;
     console.log(data);
