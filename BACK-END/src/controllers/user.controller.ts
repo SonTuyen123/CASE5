@@ -31,7 +31,7 @@ export class UserController {
     return res.status(200).json({ message: "Thêm thành công !" });
   }
   static async listMp3(req: Request, res: Response) {
-    const mp3list = await ListMp3.find();
+    const mp3list = await (await ListMp3.find()).reverse();
     return res.status(200).json({ list: mp3list });
   }
 
@@ -49,7 +49,7 @@ export class UserController {
       return res
         .status(200)
         .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
-    } else if (!user.email_verify) {
+    } else if (user.email_verify === "false") {
       return res.status(200).json({
         message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
       });
@@ -108,21 +108,31 @@ export class UserController {
     let User = await Users.findOne({
       _id: id,
     });
-    
+
     return res.status(200).json({ user: User });
   }
 
   static async UploadImgUser(req: Request, res: Response) {
     let data = req.body;
     console.log(data);
+    let id = data.id;
+
+    await Users.updateOne(
+      { _id: id },
+      {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        username: data.username,
+        email_verify: data.email_verify,
+        image: data.image,
+      }
+    );
+
+    return res.status(200).json({ message: "edit thanh cong !" });
   }
 
   static async deleteUsers(req: Request, res: Response) {
     let id = req.body.id;
-    console.log(
-      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
-      id
-    );
     await Users.deleteOne({
       _id: `${id}`,
     });
@@ -130,18 +140,11 @@ export class UserController {
   }
   static async deleteMp3(req: Request, res: Response) {
     let id = req.body.id;
-    console.log(
-      "🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id",
-      id
-    );
     await ListMp3.deleteOne({
       _id: `${id}`,
     });
     return res.status(200).json({ message: "delete mp3 thanh cong" });
   }
-
-
- 
 
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;

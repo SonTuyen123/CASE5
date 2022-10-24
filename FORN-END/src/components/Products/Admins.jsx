@@ -43,7 +43,7 @@ export const Admins = () => {
               <i class="fa-brands fa-react fa-6x"></i>
             </div>
             <div className="ml-3">
-              <h1 className="text-3xl font-bold text-indigo-600">Đẳng Cấp</h1>
+              <h1 className="text-3xl font-bold text-indigo-600">Đẳng's Cấp</h1>
               <p className="text-center text-sm text-indigo-600 mt-1 font-serif">
                 DASHBOARD
               </p>

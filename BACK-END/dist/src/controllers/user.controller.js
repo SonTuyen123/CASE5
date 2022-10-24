@@ -56,7 +56,7 @@ class UserController {
         return res.status(200).json({ message: "Thêm thành công !" });
     }
     static async listMp3(req, res) {
-        const mp3list = await listmp3_schema_1.default.find();
+        const mp3list = await (await listmp3_schema_1.default.find()).reverse();
         return res.status(200).json({ list: mp3list });
     }
     static async login(req, res) {
@@ -71,7 +71,7 @@ class UserController {
                 .status(200)
                 .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
         }
-        else if (!user.email_verify) {
+        else if (user.email_verify === "false") {
             return res.status(200).json({
                 message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
             });
@@ -136,10 +136,18 @@ class UserController {
     static async UploadImgUser(req, res) {
         let data = req.body;
         console.log(data);
+        let id = data.id;
+        await user_schema_1.default.updateOne({ _id: id }, {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            username: data.username,
+            email_verify: data.email_verify,
+            image: data.image,
+        });
+        return res.status(200).json({ message: "edit thanh cong !" });
     }
     static async deleteUsers(req, res) {
         let id = req.body.id;
-        console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
         await user_schema_1.default.deleteOne({
             _id: `${id}`,
         });
@@ -147,7 +155,6 @@ class UserController {
     }
     static async deleteMp3(req, res) {
         let id = req.body.id;
-        console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
         await listmp3_schema_1.default.deleteOne({
             _id: `${id}`,
         });
