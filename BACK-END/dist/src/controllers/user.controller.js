@@ -71,7 +71,7 @@ class UserController {
                 .status(200)
                 .json({ message: "Đăng nhập thất bại! Vui lòng thử lại !" });
         }
-        else if (!user.email_verify) {
+        else if (user.email_verify === "false") {
             return res.status(200).json({
                 message: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email !",
             });
@@ -148,7 +148,6 @@ class UserController {
     }
     static async deleteUsers(req, res) {
         let id = req.body.id;
-        console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
         await user_schema_1.default.deleteOne({
             _id: `${id}`,
         });
@@ -156,7 +155,6 @@ class UserController {
     }
     static async deleteMp3(req, res) {
         let id = req.body.id;
-        console.log("🚀 ~ file: user.controller.ts ~ line 119 ~ UserController ~ deleteUsers ~ id", id);
         await listmp3_schema_1.default.deleteOne({
             _id: `${id}`,
         });
