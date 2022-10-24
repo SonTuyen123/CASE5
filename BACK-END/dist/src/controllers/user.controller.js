@@ -136,6 +136,15 @@ class UserController {
     static async UploadImgUser(req, res) {
         let data = req.body;
         console.log(data);
+        let id = data.id;
+        await user_schema_1.default.updateOne({ _id: id }, {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            username: data.username,
+            email_verify: data.email_verify,
+            image: data.image,
+        });
+        return res.status(200).json({ message: "edit thanh cong !" });
     }
     static async deleteUsers(req, res) {
         let id = req.body.id;

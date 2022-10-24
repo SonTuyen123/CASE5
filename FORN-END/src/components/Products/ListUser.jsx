@@ -31,7 +31,7 @@ export default function ListUser() {
   const [newUser, setNewUser] = useState([]);
   const [errorImage, setErrorImage] = useState("");
   const [ImageUpload, setImageUpload] = useState(null);
-  const [Upload, setUpload] = useState([]);
+  const [Upload, setUpload] = useState();
   const [flag, setFlag] = useState();
 
   const listUerApi = async () => {
@@ -238,7 +238,11 @@ export default function ListUser() {
                         <div className="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                           <img
                             className="object-cover w-full h-full rounded-full"
-                            src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
+                            src={
+                              item.image
+                                ? item.image
+                                : "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
+                            }
                             alt
                             loading="lazy"
                           />
@@ -392,13 +396,16 @@ export default function ListUser() {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                  <h3 className="text-3xl font-semibold">Update User</h3>
+                  <h3 className="text-3xl font-semibold ">Update User</h3>
                   <a onClick={() => setShowModal(false)}>
                     <i class="fa-solid fa-x"></i>
                   </a>
                 </div>
                 {/*body*/}
-                <div className="relative p-6 flex-auto">
+                <div
+                  className="relative p-6 flex-auto"
+                  style={{ width: "600px" }}
+                >
                   <Formik
                     initialValues={{
                       firstname: newUser.firstname,
@@ -411,14 +418,14 @@ export default function ListUser() {
                       let image = Upload["type"];
                       console.log(
                         "🚀 ~ file: ListUser.jsx ~ line 388 ~ ListUser ~ image",
-                        image
+                        Upload
                       );
 
                       if (!validImageTypes.includes(image)) {
                         setErrorImage(true);
                       } else {
                         setErrorImage(false);
-                        const imageRef = ref(storage, `image/${Upload}`);
+                        const imageRef = ref(storage, `image/${Upload.name}`);
                         uploadBytes(imageRef, Upload).then((snaphost) => {
                           getDownloadURL(snaphost.ref).then((url) => {
                             UploadImgApi({
@@ -428,7 +435,16 @@ export default function ListUser() {
                               lastname: values.lastname,
                               username: values.username,
                               email_verify: values.email_verify,
-                            });
+                            })
+                              .then((res) => {
+                                console.log(res);
+                                setShowModal(false);
+                                setUpload("");
+                                setFlag(res);
+                              })
+                              .catch((e) => {
+                                console.log(e);
+                              });
                           });
                         });
                       }
@@ -461,7 +477,7 @@ export default function ListUser() {
                               name="id"
                               onChange={handleChange}
                               id="first name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700  dark:text-gray-900"
                             />
                           </div>
                           <div>
@@ -477,7 +493,7 @@ export default function ListUser() {
                               value={values.firstname}
                               onChange={handleChange}
                               id="first name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
                             />
                             {errors.firstname && touched.firstname ? (
                               <div style={{ color: "red" }}>
@@ -498,7 +514,7 @@ export default function ListUser() {
                               value={values.lastname}
                               onChange={handleChange}
                               id="last name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
                             />
                             {errors.lastname && touched.lastname ? (
                               <div style={{ color: "red" }}>
@@ -519,7 +535,7 @@ export default function ListUser() {
                               value={values.username}
                               onChange={handleChange}
                               id="user name"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
                             />
                             {errors.username && touched.username ? (
                               <div style={{ color: "red" }}>
@@ -538,10 +554,10 @@ export default function ListUser() {
                             <input
                               type="text"
                               name="email_verify"
-                              value={newUser.email_verify}
+                              value={values.email_verify}
                               onChange={handleChange}
                               id="email_verify"
-                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                              className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
                             />
                             {errors.email_verify && touched.email_verify ? (
                               <div style={{ color: "red" }}>
@@ -556,7 +572,7 @@ export default function ListUser() {
                             >
                               Photo
                             </label>
-                            <div className="border rounded-md border-gray-700 bg-gray-900">
+                            <div className="border rounded-md border-gray-700 dark:text-gray-900">
                               <input
                                 type="file"
                                 name="image"
