@@ -70,6 +70,7 @@ export class UserController {
         });
         const response = {
           token: token,
+          user: user
         };
         return res
           .status(200)
@@ -145,6 +146,7 @@ export class UserController {
     });
     return res.status(200).json({ message: "delete mp3 thanh cong" });
   }
+
 
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;

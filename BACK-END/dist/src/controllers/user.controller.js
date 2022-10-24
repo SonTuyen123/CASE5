@@ -94,6 +94,7 @@ class UserController {
                 });
                 const response = {
                     token: token,
+                    user: user
                 };
                 return res
                     .status(200)
