@@ -31,16 +31,23 @@ const Search = (props) =>{
   const handleChange = (e) =>{
     setValueSearch(e.target.value)
     getApi()
-    .then(res =>{ dispatch(setData(res.data.list)) ;})
+    .then(res =>{ dispatch(setData(res.data.list))})
     .catch(e =>  console.log(e.message))
+    data.map(element =>{
+      let name = toNonAccentVietnamese(element.name).toLowerCase();
+      let value = toNonAccentVietnamese(e.target.value).toLowerCase();
+      if(name.includes(value)){
+        setDataSearch(element)
+      }else{
+        setDataSearch([])
+      }
+    })
   }
-
 
 
   const handleFocus = () =>{
     document.querySelector('.suggest').style.display = 'block' ;
     setSubSearch('block')
-    setDataSearch(data)
   }
 
   function handleClickOutSide(e) {
@@ -56,7 +63,6 @@ const Search = (props) =>{
     })
     document.querySelector('.suggest').style.display = 'none' ;
   }
-
   const handleClickBtnSearch = () =>{
     dispatch(setData(dataSearch))
   }

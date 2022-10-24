@@ -43,7 +43,7 @@ const Home = () => {
             nhất có thể nhé{" "}
           </h2>
           <div class="row1 play-list">
-            {data &&
+            {data.length !== 0 ?
               data.map((element) => {
                 return (
                   <>
@@ -56,7 +56,7 @@ const Home = () => {
                     </div>
                   </>
                 );
-              })}
+              }) : <p style={{textAlign : 'center' , position : 'relative' , left : '50%' , transform : 'translateX(-50%)' , fontSize : '24px' , color : 'red' }}>Bài hát tìm kiếm không tồn tại</p>}
           </div>
           <div className="footter">
             <Footer />
