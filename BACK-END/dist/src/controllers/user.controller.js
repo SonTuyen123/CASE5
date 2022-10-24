@@ -56,7 +56,7 @@ class UserController {
         return res.status(200).json({ message: "Thêm thành công !" });
     }
     static async listMp3(req, res) {
-        const mp3list = await listmp3_schema_1.default.find();
+        const mp3list = await (await listmp3_schema_1.default.find()).reverse();
         return res.status(200).json({ list: mp3list });
     }
     static async login(req, res) {

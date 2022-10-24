@@ -31,7 +31,7 @@ export class UserController {
     return res.status(200).json({ message: "Thêm thành công !" });
   }
   static async listMp3(req: Request, res: Response) {
-    const mp3list = await ListMp3.find();
+    const mp3list = await (await ListMp3.find()).reverse();
     return res.status(200).json({ list: mp3list });
   }
 
