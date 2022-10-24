@@ -18,7 +18,6 @@ const Home = () => {
       .get("http://localhost:8080/admin/listMp3")
       .then((res) => {
         let data = res.data.list.reverse();
-
         setListMusic(data);
         dispatch(setData(res.data.list));
       })
