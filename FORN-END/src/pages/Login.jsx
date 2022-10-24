@@ -58,7 +58,6 @@ export default function Login() {
                   localStorage.setItem("token", token);
                   Swal.fire("Đăng nhập thành công !").then((result) => {
 
-                    
                     navigate("/home");
                   });
                 }

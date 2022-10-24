@@ -259,7 +259,10 @@ audio::-webkit-media-controls-panel {
 background-color: rgba(245, 102, 31 , 1) ;
 color: #fff;
 }
-
+.primary-color-icons {
+  color: rgba(245, 102, 31 , 1);
+  padding: 12px;
+}
 
 .mr-10{
   margin-left: 10px !important;
@@ -269,8 +272,17 @@ color: #fff;
 }
 
 
-
-
+.hello{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-left: 22px;
+    font-family: inherit;
+}
+.hello:hover{
+  cursor: pointer;
+}
 
 /* Grid */
 .grids {

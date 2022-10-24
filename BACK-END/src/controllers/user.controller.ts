@@ -70,6 +70,7 @@ export class UserController {
         });
         const response = {
           token: token,
+          user: user
         };
         return res
           .status(200)
@@ -108,7 +109,7 @@ export class UserController {
     let User = await Users.findOne({
       _id: id,
     });
-    
+
     return res.status(200).json({ user: User });
   }
 
@@ -141,7 +142,7 @@ export class UserController {
   }
 
 
- 
+
 
   static async showFormEditCustomer(req: Request, res: Response) {
     let id = req.query.id;
