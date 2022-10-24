@@ -26,7 +26,6 @@ const Home = () => {
       })
       .catch((e) => console.log(e.message));
   }, [url]);
-
   return (
     <>
       <div className="app">
