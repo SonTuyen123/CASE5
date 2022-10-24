@@ -570,19 +570,20 @@ export default function ListUser() {
                               >
                                 Status
                               </label>
-                              <input
+
+                              <select
                                 type="text"
                                 name="email_verify"
                                 value={values.email_verify}
                                 onChange={handleChange}
                                 id="email_verify"
                                 className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:text-gray-900"
-                              />
-                              {errors.email_verify && touched.email_verify ? (
-                                <div style={{ color: "red" }}>
-                                  {errors.email_verify}
-                                </div>
-                              ) : null}
+                              >
+                                <option value="true">True</option>
+                                <option selected value="false">
+                                  False
+                                </option>
+                              </select>
                             </div>
                           </div>
                           <div>
